@@ -58,6 +58,10 @@ obj/Debug/net8.0/
  .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
  RemoteLinuxManager.Infrastructure.SshNet.AssemblyInfo.cs
  RemoteLinuxManager.Infrastructure.SshNet.GlobalUsings.g.cs
+Persistence/
+ AppDatabase.cs
+ SqliteCredentialStore.cs
+ SqliteHostProfileService.cs
 Security/InMemoryCredentialStore.cs
 Services/
  InMemoryHostProfileService.cs
@@ -236,9 +240,14 @@ Services/
  WindowsBase.dll
 <NUGET>/
  bouncycastle.cryptography/2.6.2/lib/net6.0/BouncyCastle.Cryptography.dll
+ microsoft.data.sqlite.core/8.0.11/lib/net8.0/Microsoft.Data.Sqlite.dll
  microsoft.extensions.dependencyinjection.abstractions/8.0.2/lib/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
  microsoft.extensions.logging.abstractions/8.0.3/lib/net8.0/Microsoft.Extensions.Logging.Abstractions.dll
+ sqlitepclraw.bundle_e_sqlite3/2.1.6/lib/netstandard2.0/SQLitePCLRaw.batteries_v2.dll
+ sqlitepclraw.core/2.1.6/lib/netstandard2.0/SQLitePCLRaw.core.dll
+ sqlitepclraw.provider.e_sqlite3/2.1.6/lib/net6.0/SQLitePCLRaw.provider.e_sqlite3.dll
  ssh.net/2025.1.0/lib/net8.0/Renci.SshNet.dll
+ system.security.cryptography.protecteddata/8.0.0/lib/net8.0/System.Security.Cryptography.ProtectedData.dll
 
 [analyzerReferences]
 <DOTNET>/packs/Microsoft.NETCore.App.Ref/8.0.26/analyzers/dotnet/cs/

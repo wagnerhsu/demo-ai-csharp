@@ -237,6 +237,7 @@ ViewModels/
 <NUGET>/
  bouncycastle.cryptography/2.6.2/lib/net6.0/BouncyCastle.Cryptography.dll
  communitytoolkit.mvvm/8.4.2/lib/net8.0/CommunityToolkit.Mvvm.dll
+ microsoft.data.sqlite.core/8.0.11/lib/net8.0/Microsoft.Data.Sqlite.dll
  microsoft.extensions.dependencyinjection.abstractions/10.0.7/lib/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
  microsoft.extensions.dependencyinjection/10.0.7/lib/net8.0/Microsoft.Extensions.DependencyInjection.dll
  microsoft.extensions.logging.abstractions/8.0.3/lib/net8.0/Microsoft.Extensions.Logging.Abstractions.dll
@@ -277,6 +278,9 @@ ViewModels/
   UIAutomationProvider.dll
   UIAutomationTypes.dll
   WindowsBase.dll
+ sqlitepclraw.bundle_e_sqlite3/2.1.6/lib/netstandard2.0/SQLitePCLRaw.batteries_v2.dll
+ sqlitepclraw.core/2.1.6/lib/netstandard2.0/SQLitePCLRaw.core.dll
+ sqlitepclraw.provider.e_sqlite3/2.1.6/lib/net6.0-windows7.0/SQLitePCLRaw.provider.e_sqlite3.dll
  ssh.net/2025.1.0/lib/net8.0/Renci.SshNet.dll
 
 [analyzerReferences]
