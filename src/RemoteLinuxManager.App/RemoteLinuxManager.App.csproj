@@ -12,6 +12,13 @@
     <PackageReference Include="WPF-UI" Version="4.2.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="serilog.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
@@ -19,6 +26,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <FileVersion>5.0.0</FileVersion>
+    <ProductVersion>5.0.0</ProductVersion>
   </PropertyGroup>
 
 </Project>
