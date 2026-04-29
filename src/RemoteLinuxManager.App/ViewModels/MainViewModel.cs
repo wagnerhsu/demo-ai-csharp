@@ -576,6 +576,9 @@ public partial class MainViewModel : ObservableObject
             : $"{Logs}{Environment.NewLine}{line}";
     }
 
+    [RelayCommand]
+    private void ClearLogs() => Logs = string.Empty;
+
     private static string BuildPasswordSecretId(string profileName)
     {
         return $"{profileName}:password";
