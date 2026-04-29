@@ -17,6 +17,22 @@ public partial class MainWindow : FluentWindow
         DataContext = viewModel;
     }
 
+    // ── 主题切换 ──────────────────────────────────────────────
+
+    private void ThemeDark_Click(object sender, RoutedEventArgs e)
+    {
+        Wpf.Ui.Appearance.ApplicationThemeManager.Apply(Wpf.Ui.Appearance.ApplicationTheme.Dark);
+        MenuThemeDark.IsChecked = true;
+        MenuThemeLight.IsChecked = false;
+    }
+
+    private void ThemeLight_Click(object sender, RoutedEventArgs e)
+    {
+        Wpf.Ui.Appearance.ApplicationThemeManager.Apply(Wpf.Ui.Appearance.ApplicationTheme.Light);
+        MenuThemeDark.IsChecked = false;
+        MenuThemeLight.IsChecked = true;
+    }
+
     // ── 文件树选择 ────────────────────────────────────────────
 
     private void LocalTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
