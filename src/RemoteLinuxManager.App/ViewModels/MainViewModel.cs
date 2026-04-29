@@ -119,6 +119,28 @@ public partial class MainViewModel : ObservableObject
         Username = value.Username;
         AuthenticationType = value.AuthenticationType;
         PrivateKeyPath = value.PrivateKeyPath ?? string.Empty;
+        Password = string.Empty;
+        PrivateKeyPassphrase = string.Empty;
+
+        _ = LoadCredentialsForProfileAsync(value, CancellationToken.None);
+    }
+
+    private async Task LoadCredentialsForProfileAsync(HostProfile profile, CancellationToken cancellationToken)
+    {
+        if (profile.AuthenticationType == AuthenticationType.Password
+            && !string.IsNullOrWhiteSpace(profile.PasswordSecretId))
+        {
+            var pwd = await _credentialStore.GetAsync(profile.PasswordSecretId, cancellationToken);
+            if (pwd is not null)
+                Password = pwd;
+        }
+        else if (profile.AuthenticationType == AuthenticationType.PrivateKey
+            && !string.IsNullOrWhiteSpace(profile.PrivateKeyPassphraseSecretId))
+        {
+            var passphrase = await _credentialStore.GetAsync(profile.PrivateKeyPassphraseSecretId, cancellationToken);
+            if (passphrase is not null)
+                PrivateKeyPassphrase = passphrase;
+        }
     }
 
     [RelayCommand]
