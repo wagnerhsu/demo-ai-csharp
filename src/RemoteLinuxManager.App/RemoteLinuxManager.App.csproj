@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <Content Include="ssh_icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RemoteLinuxManager.Application\RemoteLinuxManager.Application.csproj" />
     <ProjectReference Include="..\RemoteLinuxManager.Domain\RemoteLinuxManager.Domain.csproj" />
     <ProjectReference Include="..\RemoteLinuxManager.Infrastructure.SshNet\RemoteLinuxManager.Infrastructure.SshNet.csproj" />
@@ -37,6 +41,7 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <FileVersion>5.0.0</FileVersion>
     <ProductVersion>5.0.0</ProductVersion>
+    <ApplicationIcon>ssh_icon.ico</ApplicationIcon>
   </PropertyGroup>
 
 </Project>
