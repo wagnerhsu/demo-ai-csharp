@@ -411,10 +411,15 @@ public partial class MainViewModel : ObservableObject
     private async Task InitRemoteTreeAsync(CancellationToken cancellationToken)
     {
         RemoteRoots.Clear();
-        var rootNode = CreateRemoteNode("/", "/", cancellationToken);
+
+        var homeDir = $"/home/{Username.Trim()}";
+        var startPath = await _remoteFileBrowser.DirectoryExistsAsync(homeDir, cancellationToken)
+            ? homeDir
+            : "/";
+
+        var rootNode = CreateRemoteNode(startPath, startPath, cancellationToken);
         RemoteRoots.Add(rootNode);
         rootNode.IsExpanded = true;
-        await Task.CompletedTask;
     }
 
     private FileTreeNode CreateLocalNode(string path, string? displayName = null)

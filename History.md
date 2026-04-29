@@ -6,6 +6,8 @@
 - Serilog structured logging: console, daily rolling file (`Logs/RemoteLinuxManager-<date>.log`), and Seq sink (`http://localhost:5341`)
 - `serilog.json` configuration file; enriched with machine name, process ID, and thread ID
 - `Microsoft.Extensions.Logging` wired to Serilog via `AddSerilog()` so injected `ILogger<T>` resolves through Serilog
+- Remote file tree defaults to `/home/{username}` on connect if the directory exists, falling back to `/`
+- `IRemoteFileBrowserService.DirectoryExistsAsync` added; implemented via `SftpClient.Exists`
 
 ---
 

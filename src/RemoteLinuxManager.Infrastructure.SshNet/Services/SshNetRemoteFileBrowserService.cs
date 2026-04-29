@@ -25,4 +25,13 @@ public sealed class SshNetRemoteFileBrowserService : IRemoteFileBrowserService
                 .ToList();
         }, cancellationToken);
     }
+
+    public Task<bool> DirectoryExistsAsync(string remotePath, CancellationToken cancellationToken)
+    {
+        return Task.Run(() =>
+        {
+            var sftp = _sessionService.GetRequiredSftpClient();
+            return sftp.Exists(remotePath);
+        }, cancellationToken);
+    }
 }
