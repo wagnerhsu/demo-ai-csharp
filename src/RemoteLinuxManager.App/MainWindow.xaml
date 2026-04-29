@@ -50,11 +50,11 @@
                 <TextBlock Grid.Row="1" Grid.Column="5" Margin="4" VerticalAlignment="Center" Text="{Binding IsConnected}" />
 
                 <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="密码" />
-                <TextBox Grid.Row="2" Grid.Column="1" Margin="4" Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" />
+                <PasswordBox Grid.Row="2" Grid.Column="1" Margin="4" x:Name="PasswordBox" PasswordChanged="PasswordBox_PasswordChanged" />
                 <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Text="私钥路径" />
                 <TextBox Grid.Row="2" Grid.Column="3" Margin="4" Text="{Binding PrivateKeyPath, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Grid.Row="2" Grid.Column="4" VerticalAlignment="Center" Text="私钥口令" />
-                <TextBox Grid.Row="2" Grid.Column="5" Margin="4" Text="{Binding PrivateKeyPassphrase, UpdateSourceTrigger=PropertyChanged}" />
+                <PasswordBox Grid.Row="2" Grid.Column="5" Margin="4" x:Name="PassphraseBox" PasswordChanged="PassphraseBox_PasswordChanged" />
 
                 <ComboBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
                           Margin="4"
