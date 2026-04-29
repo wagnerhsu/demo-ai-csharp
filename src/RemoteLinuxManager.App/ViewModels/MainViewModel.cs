@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RemoteLinuxManager.Application.Security;
@@ -14,30 +15,35 @@ public partial class MainViewModel : ObservableObject
     private readonly IScriptExecutionService _scriptExecutionService;
     private readonly IHostProfileService _hostProfileService;
     private readonly ICredentialStore _credentialStore;
+    private readonly IRemoteFileBrowserService _remoteFileBrowser;
 
     public MainViewModel(
         IRemoteSessionService remoteSessionService,
         IFileTransferService fileTransferService,
         IScriptExecutionService scriptExecutionService,
         IHostProfileService hostProfileService,
-        ICredentialStore credentialStore)
+        ICredentialStore credentialStore,
+        IRemoteFileBrowserService remoteFileBrowser)
     {
         _remoteSessionService = remoteSessionService;
         _fileTransferService = fileTransferService;
         _scriptExecutionService = scriptExecutionService;
         _hostProfileService = hostProfileService;
         _credentialStore = credentialStore;
+        _remoteFileBrowser = remoteFileBrowser;
 
         AuthenticationTypes = Enum.GetValues<AuthenticationType>();
         ScriptInputTypes = Enum.GetValues<ScriptInputType>();
 
+        InitLocalTree();
         _ = LoadProfilesAsync();
     }
 
     public ObservableCollection<HostProfile> Profiles { get; } = [];
+    public ObservableCollection<FileTreeNode> LocalRoots { get; } = [];
+    public ObservableCollection<FileTreeNode> RemoteRoots { get; } = [];
 
     public IReadOnlyList<AuthenticationType> AuthenticationTypes { get; }
-
     public IReadOnlyList<ScriptInputType> ScriptInputTypes { get; }
 
     [ObservableProperty]
@@ -68,16 +74,10 @@ public partial class MainViewModel : ObservableObject
     private string privateKeyPassphrase = string.Empty;
 
     [ObservableProperty]
-    private string localUploadPath = string.Empty;
+    private FileTreeNode? selectedLocalNode;
 
     [ObservableProperty]
-    private string remoteUploadPath = string.Empty;
-
-    [ObservableProperty]
-    private string remoteDownloadPath = string.Empty;
-
-    [ObservableProperty]
-    private string localDownloadPath = string.Empty;
+    private FileTreeNode? selectedRemoteNode;
 
     [ObservableProperty]
     private ScriptInputType scriptInputType = ScriptInputType.InlineText;
@@ -176,6 +176,7 @@ public partial class MainViewModel : ObservableObject
             await _remoteSessionService.ConnectAsync(profile, secret, CancellationToken.None);
             IsConnected = _remoteSessionService.IsConnected;
             AppendLog($"连接成功: {profile.Username}@{profile.Host}:{profile.Port}");
+            await InitRemoteTreeAsync(CancellationToken.None);
         }
         catch (Exception ex)
         {
@@ -196,6 +197,8 @@ public partial class MainViewModel : ObservableObject
             IsBusy = true;
             await _remoteSessionService.DisconnectAsync(CancellationToken.None);
             IsConnected = false;
+            RemoteRoots.Clear();
+            SelectedRemoteNode = null;
             AppendLog("连接已断开。");
         }
         catch (Exception ex)
@@ -216,11 +219,21 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(LocalUploadPath) || string.IsNullOrWhiteSpace(RemoteUploadPath))
+        if (SelectedLocalNode is null || SelectedLocalNode.IsDirectory)
         {
-            AppendLog("上传失败: 本地路径和远程路径不能为空。");
+            AppendLog("上传失败: 请在左侧选择一个本地文件。");
             return;
         }
+
+        if (SelectedRemoteNode is null)
+        {
+            AppendLog("上传失败: 请在右侧选择目标远程目录或文件。");
+            return;
+        }
+
+        var remotePath = SelectedRemoteNode.IsDirectory
+            ? SelectedRemoteNode.FullPath.TrimEnd('/') + "/" + Path.GetFileName(SelectedLocalNode.FullPath)
+            : SelectedRemoteNode.FullPath;
 
         try
         {
@@ -230,16 +243,21 @@ public partial class MainViewModel : ObservableObject
             var request = new TransferRequest
             {
                 Direction = TransferDirection.Upload,
-                LocalPath = LocalUploadPath,
-                RemotePath = RemoteUploadPath
+                LocalPath = SelectedLocalNode.FullPath,
+                RemotePath = remotePath
             };
 
             var progress = new Progress<TransferProgress>(value => TransferProgress = value.Percentage);
             var result = await _fileTransferService.UploadAsync(request, progress, CancellationToken.None);
 
             AppendLog(result.Succeeded
-                ? $"上传成功: {LocalUploadPath} -> {RemoteUploadPath}"
+                ? $"上传成功: {SelectedLocalNode.FullPath} -> {remotePath}"
                 : $"上传失败: {result.ErrorMessage}");
+
+            if (result.Succeeded)
+            {
+                await RefreshRemoteNodeAsync(SelectedRemoteNode, CancellationToken.None);
+            }
         }
         finally
         {
@@ -255,11 +273,23 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(RemoteDownloadPath) || string.IsNullOrWhiteSpace(LocalDownloadPath))
+        if (SelectedRemoteNode is null || SelectedRemoteNode.IsDirectory)
         {
-            AppendLog("下载失败: 远程路径和本地路径不能为空。");
+            AppendLog("下载失败: 请在右侧选择一个远程文件。");
             return;
         }
+
+        if (SelectedLocalNode is null)
+        {
+            AppendLog("下载失败: 请在左侧选择本地目标目录。");
+            return;
+        }
+
+        var localDir = SelectedLocalNode.IsDirectory
+            ? SelectedLocalNode.FullPath
+            : Path.GetDirectoryName(SelectedLocalNode.FullPath) ?? string.Empty;
+
+        var localPath = Path.Combine(localDir, SelectedRemoteNode.Name);
 
         try
         {
@@ -269,16 +299,25 @@ public partial class MainViewModel : ObservableObject
             var request = new TransferRequest
             {
                 Direction = TransferDirection.Download,
-                LocalPath = LocalDownloadPath,
-                RemotePath = RemoteDownloadPath
+                LocalPath = localPath,
+                RemotePath = SelectedRemoteNode.FullPath
             };
 
             var progress = new Progress<TransferProgress>(value => TransferProgress = value.Percentage);
             var result = await _fileTransferService.DownloadAsync(request, progress, CancellationToken.None);
 
             AppendLog(result.Succeeded
-                ? $"下载成功: {RemoteDownloadPath} -> {LocalDownloadPath}"
+                ? $"下载成功: {SelectedRemoteNode.FullPath} -> {localPath}"
                 : $"下载失败: {result.ErrorMessage}");
+
+            if (result.Succeeded)
+            {
+                var parentNode = SelectedLocalNode.IsDirectory ? SelectedLocalNode : null;
+                if (parentNode != null)
+                {
+                    await RefreshLocalNodeAsync(parentNode);
+                }
+            }
         }
         finally
         {
@@ -336,6 +375,106 @@ public partial class MainViewModel : ObservableObject
         {
             IsBusy = false;
         }
+    }
+
+    private void InitLocalTree()
+    {
+        LocalRoots.Clear();
+        foreach (var drive in DriveInfo.GetDrives().Where(d => d.IsReady))
+        {
+            LocalRoots.Add(CreateLocalNode(drive.RootDirectory.FullName, drive.Name));
+        }
+    }
+
+    private async Task InitRemoteTreeAsync(CancellationToken cancellationToken)
+    {
+        RemoteRoots.Clear();
+        var rootNode = CreateRemoteNode("/", "/", cancellationToken);
+        RemoteRoots.Add(rootNode);
+        rootNode.IsExpanded = true;
+        await Task.CompletedTask;
+    }
+
+    private FileTreeNode CreateLocalNode(string path, string? displayName = null)
+    {
+        var name = displayName ?? Path.GetFileName(path);
+        if (string.IsNullOrEmpty(name)) name = path;
+
+        return new FileTreeNode(name, path, isDirectory: true, onExpand: async node =>
+        {
+            try
+            {
+                var children = await Task.Run(() =>
+                {
+                    var dirs = Directory.GetDirectories(path)
+                        .Select(d => CreateLocalNode(d))
+                        .OrderBy(n => n.Name, StringComparer.OrdinalIgnoreCase);
+
+                    var files = Directory.GetFiles(path)
+                        .Select(f => new FileTreeNode(Path.GetFileName(f), f, isDirectory: false, onExpand: null))
+                        .OrderBy(n => n.Name, StringComparer.OrdinalIgnoreCase);
+
+                    return dirs.Concat(files).ToList();
+                });
+
+                node.Children.Clear();
+                foreach (var child in children)
+                    node.Children.Add(child);
+            }
+            catch
+            {
+                node.Children.Clear();
+            }
+        });
+    }
+
+    private FileTreeNode CreateRemoteNode(string path, string? displayName, CancellationToken cancellationToken)
+    {
+        var name = displayName ?? (path == "/" ? "/" : Path.GetFileName(path.TrimEnd('/')));
+        if (string.IsNullOrEmpty(name)) name = path;
+
+        return new FileTreeNode(name, path, isDirectory: true, onExpand: async node =>
+        {
+            try
+            {
+                var entries = await _remoteFileBrowser.ListDirectoryAsync(path, cancellationToken);
+
+                node.Children.Clear();
+                foreach (var entry in entries)
+                {
+                    if (entry.IsDirectory)
+                        node.Children.Add(CreateRemoteNode(entry.FullPath, entry.Name, cancellationToken));
+                    else
+                        node.Children.Add(new FileTreeNode(entry.Name, entry.FullPath, isDirectory: false, onExpand: null));
+                }
+            }
+            catch (Exception ex)
+            {
+                node.Children.Clear();
+                AppendLog($"远程目录加载失败 [{path}]: {ex.Message}");
+            }
+        });
+    }
+
+    private async Task RefreshRemoteNodeAsync(FileTreeNode node, CancellationToken cancellationToken)
+    {
+        var targetNode = node.IsDirectory ? node : null;
+        if (targetNode is null) return;
+
+        targetNode.Children.Clear();
+        targetNode.Children.Add(FileTreeNode.LoadingPlaceholder);
+        targetNode.IsExpanded = false;
+        targetNode.IsExpanded = true;
+        await Task.CompletedTask;
+    }
+
+    private async Task RefreshLocalNodeAsync(FileTreeNode node)
+    {
+        node.Children.Clear();
+        node.Children.Add(FileTreeNode.LoadingPlaceholder);
+        node.IsExpanded = false;
+        node.IsExpanded = true;
+        await Task.CompletedTask;
     }
 
     private async Task<ConnectionSecret> BuildConnectionSecretAsync(HostProfile profile, CancellationToken cancellationToken)

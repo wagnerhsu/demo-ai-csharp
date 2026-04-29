@@ -62,6 +62,7 @@ Services/
  ConnectionSecret.cs
  IFileTransferService.cs
  IHostProfileService.cs
+ IRemoteFileBrowserService.cs
  IRemoteSessionService.cs
  IScriptExecutionService.cs
 

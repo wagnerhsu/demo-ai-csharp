@@ -29,4 +29,17 @@ public partial class MainWindow : Window
         if (DataContext is MainViewModel vm)
             vm.SudoPassword = ((PasswordBox)sender).Password;
     }
+
+    private void LocalTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
+        if (DataContext is MainViewModel vm)
+            vm.SelectedLocalNode = e.NewValue as FileTreeNode;
+    }
+
+    private void RemoteTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
+        if (DataContext is MainViewModel vm)
+            vm.SelectedRemoteNode = e.NewValue as FileTreeNode;
+    }
 }
+

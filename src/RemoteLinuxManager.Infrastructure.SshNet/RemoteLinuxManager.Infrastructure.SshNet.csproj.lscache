@@ -62,6 +62,7 @@ Security/InMemoryCredentialStore.cs
 Services/
  InMemoryHostProfileService.cs
  SshNetFileTransferService.cs
+ SshNetRemoteFileBrowserService.cs
  SshNetRemoteSessionService.cs
  SshNetScriptExecutionService.cs
 

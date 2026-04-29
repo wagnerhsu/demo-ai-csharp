@@ -14,6 +14,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IRemoteSessionService>(provider => provider.GetRequiredService<SshNetRemoteSessionService>());
         services.AddSingleton<IFileTransferService, SshNetFileTransferService>();
         services.AddSingleton<IScriptExecutionService, SshNetScriptExecutionService>();
+        services.AddSingleton<IRemoteFileBrowserService, SshNetRemoteFileBrowserService>();
         services.AddSingleton<IHostProfileService, InMemoryHostProfileService>();
         services.AddSingleton<ICredentialStore, InMemoryCredentialStore>();
 

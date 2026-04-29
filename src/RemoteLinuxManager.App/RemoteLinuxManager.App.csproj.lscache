@@ -62,7 +62,9 @@ obj/Debug/net8.0-windows/
  MainWindow.g.cs
  RemoteLinuxManager.App.AssemblyInfo.cs
  RemoteLinuxManager.App.GlobalUsings.g.cs
-ViewModels/MainViewModel.cs
+ViewModels/
+ FileTreeNode.cs
+ MainViewModel.cs
 
 [metadataReferences]
 ../
