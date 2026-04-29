@@ -89,6 +89,9 @@ public partial class MainViewModel : ObservableObject
     private string inlineScript = "echo hello";
 
     [ObservableProperty]
+    private string sudoPassword = string.Empty;
+
+    [ObservableProperty]
     private string remoteWorkingDirectory = ".";
 
     [ObservableProperty]
@@ -312,7 +315,8 @@ public partial class MainViewModel : ObservableObject
                 InputType = ScriptInputType,
                 Content = ScriptInputType == ScriptInputType.LocalFile ? ScriptFilePath : InlineScript,
                 RemoteWorkingDirectory = string.IsNullOrWhiteSpace(RemoteWorkingDirectory) ? "." : RemoteWorkingDirectory,
-                Timeout = TimeSpan.FromMinutes(3)
+                Timeout = TimeSpan.FromMinutes(3),
+                SudoPassword = string.IsNullOrWhiteSpace(SudoPassword) ? null : SudoPassword
             };
 
             var result = await _scriptExecutionService.ExecuteAsync(request, CancellationToken.None);

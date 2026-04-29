@@ -122,6 +122,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="执行模式" />
@@ -133,11 +134,14 @@
                 <TextBox Grid.Row="0" Grid.Column="3" Margin="4" Text="{Binding RemoteWorkingDirectory, UpdateSourceTrigger=PropertyChanged}" />
                 <Button Grid.Row="0" Grid.Column="4" Margin="4" Padding="12,6" Content="执行脚本" Command="{Binding ExecuteScriptCommand}" />
 
-                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="本地脚本路径" />
-                <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Margin="4" Text="{Binding ScriptFilePath, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Sudo 密码" />
+                <PasswordBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Margin="4" x:Name="SudoPasswordBox" PasswordChanged="SudoPasswordBox_PasswordChanged" />
 
-                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="内联脚本" />
-                <TextBox Grid.Row="2"
+                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="本地脚本路径" />
+                <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Margin="4" Text="{Binding ScriptFilePath, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="内联脚本" />
+                <TextBox Grid.Row="3"
                          Grid.Column="1"
                          Grid.ColumnSpan="4"
                          Margin="4"

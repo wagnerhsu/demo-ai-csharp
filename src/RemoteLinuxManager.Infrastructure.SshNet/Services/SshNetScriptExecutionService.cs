@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Text;
+using System.Text.RegularExpressions;
 using RemoteLinuxManager.Application.Services;
 using RemoteLinuxManager.Domain.Models;
 
@@ -65,16 +67,29 @@ public sealed class SshNetScriptExecutionService : IScriptExecutionService
         ScriptExecutionRequest request,
         CancellationToken cancellationToken)
     {
-        var commandText =
-            $"cd -- {Quote(request.RemoteWorkingDirectory)} && bash -lc {Quote(request.Content)}";
+        var script = request.Content;
+        byte[]? stdinData = null;
 
-        return RunCommandAsync(commandText, request.Timeout, cancellationToken);
+        if (!string.IsNullOrEmpty(request.SudoPassword))
+        {
+            var sudoCount = Regex.Matches(script, @"\bsudo\b").Count;
+            if (sudoCount > 0)
+            {
+                script = Regex.Replace(script, @"\bsudo(?!\s+-S)\b", "sudo -S");
+                var stdinContent = string.Concat(Enumerable.Repeat(request.SudoPassword + "\n", sudoCount));
+                stdinData = Encoding.UTF8.GetBytes(stdinContent);
+            }
+        }
+
+        var commandText = $"cd -- {Quote(request.RemoteWorkingDirectory)} && bash -lc {Quote(script)}";
+        return RunCommandAsync(commandText, request.Timeout, cancellationToken, stdinData);
     }
 
     private async Task<ScriptExecutionResult> RunCommandAsync(
         string commandText,
         TimeSpan timeout,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        byte[]? stdinData = null)
     {
         var sshClient = _sessionService.GetRequiredSshClient();
         var command = sshClient.CreateCommand(commandText);
@@ -84,8 +99,18 @@ public sealed class SshNetScriptExecutionService : IScriptExecutionService
 
         try
         {
-            await Task.Run(command.Execute, cancellationToken);
-            stopwatch.Stop();
+            if (stdinData != null)
+            {
+                var executeTask = command.ExecuteAsync(cancellationToken);
+                using var stdin = command.CreateInputStream();
+                await stdin.WriteAsync(stdinData, cancellationToken);
+                stdin.Close();
+                await executeTask;
+            }
+            else
+            {
+                await Task.Run(command.Execute, cancellationToken);
+            }
 
             return new ScriptExecutionResult
             {

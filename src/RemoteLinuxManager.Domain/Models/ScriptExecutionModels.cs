@@ -15,6 +15,8 @@ public sealed record ScriptExecutionRequest
     public string RemoteWorkingDirectory { get; init; } = ".";
 
     public TimeSpan Timeout { get; init; } = TimeSpan.FromMinutes(2);
+
+    public string? SudoPassword { get; init; }
 }
 
 public sealed record ScriptExecutionResult

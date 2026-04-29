@@ -23,4 +23,10 @@ public partial class MainWindow : Window
         if (DataContext is MainViewModel vm)
             vm.PrivateKeyPassphrase = ((PasswordBox)sender).Password;
     }
+
+    private void SudoPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm)
+            vm.SudoPassword = ((PasswordBox)sender).Password;
+    }
 }
