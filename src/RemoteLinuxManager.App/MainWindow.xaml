@@ -23,8 +23,8 @@
         <Menu Grid.Row="1" Padding="8,2">
             <MenuItem Header="视图(_V)">
                 <MenuItem Header="主题(_T)">
-                    <MenuItem x:Name="MenuThemeDark"  Header="深色(_D)" Click="ThemeDark_Click"  IsCheckable="True" IsChecked="True" />
-                    <MenuItem x:Name="MenuThemeLight" Header="浅色(_L)" Click="ThemeLight_Click" IsCheckable="True" />
+                    <MenuItem x:Name="MenuThemeDark"  Header="深色(_D)" Click="ThemeDark_Click"  IsCheckable="True" />
+                    <MenuItem x:Name="MenuThemeLight" Header="浅色(_L)" Click="ThemeLight_Click" IsCheckable="True" IsChecked="True" />
                 </MenuItem>
             </MenuItem>
         </Menu>

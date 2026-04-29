@@ -100,7 +100,6 @@ ViewModels/
  System.Data.dll
  System.Diagnostics.Contracts.dll
  System.Diagnostics.Debug.dll
- System.Diagnostics.DiagnosticSource.dll
  System.Diagnostics.FileVersionInfo.dll
  System.Diagnostics.Process.dll
  System.Diagnostics.StackTrace.dll
@@ -206,8 +205,6 @@ ViewModels/
  System.Text.Encoding.CodePages.dll
  System.Text.Encoding.dll
  System.Text.Encoding.Extensions.dll
- System.Text.Encodings.Web.dll
- System.Text.Json.dll
  System.Text.RegularExpressions.dll
  System.Threading.Channels.dll
  System.Threading.dll
@@ -238,9 +235,21 @@ ViewModels/
  bouncycastle.cryptography/2.6.2/lib/net6.0/BouncyCastle.Cryptography.dll
  communitytoolkit.mvvm/8.4.2/lib/net8.0/CommunityToolkit.Mvvm.dll
  microsoft.data.sqlite.core/8.0.11/lib/net8.0/Microsoft.Data.Sqlite.dll
+ microsoft.extensions.configuration.abstractions/10.0.7/lib/net8.0/Microsoft.Extensions.Configuration.Abstractions.dll
+ microsoft.extensions.configuration.binder/10.0.0/lib/net8.0/Microsoft.Extensions.Configuration.Binder.dll
+ microsoft.extensions.configuration.fileextensions/10.0.7/lib/net8.0/Microsoft.Extensions.Configuration.FileExtensions.dll
+ microsoft.extensions.configuration.json/10.0.7/lib/net8.0/Microsoft.Extensions.Configuration.Json.dll
+ microsoft.extensions.configuration/10.0.7/lib/net8.0/Microsoft.Extensions.Configuration.dll
  microsoft.extensions.dependencyinjection.abstractions/10.0.7/lib/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
  microsoft.extensions.dependencyinjection/10.0.7/lib/net8.0/Microsoft.Extensions.DependencyInjection.dll
- microsoft.extensions.logging.abstractions/8.0.3/lib/net8.0/Microsoft.Extensions.Logging.Abstractions.dll
+ microsoft.extensions.dependencymodel/10.0.0/lib/net8.0/Microsoft.Extensions.DependencyModel.dll
+ microsoft.extensions.fileproviders.abstractions/10.0.7/lib/net8.0/Microsoft.Extensions.FileProviders.Abstractions.dll
+ microsoft.extensions.fileproviders.physical/10.0.7/lib/net8.0/Microsoft.Extensions.FileProviders.Physical.dll
+ microsoft.extensions.filesystemglobbing/10.0.7/lib/net8.0/Microsoft.Extensions.FileSystemGlobbing.dll
+ microsoft.extensions.logging.abstractions/10.0.0/lib/net8.0/Microsoft.Extensions.Logging.Abstractions.dll
+ microsoft.extensions.logging/10.0.0/lib/net8.0/Microsoft.Extensions.Logging.dll
+ microsoft.extensions.options/10.0.0/lib/net8.0/Microsoft.Extensions.Options.dll
+ microsoft.extensions.primitives/10.0.7/lib/net8.0/Microsoft.Extensions.Primitives.dll
  microsoft.windowsdesktop.app.ref/8.0.26/ref/net8.0/
   Accessibility.dll
   Microsoft.Win32.Registry.AccessControl.dll
@@ -278,10 +287,23 @@ ViewModels/
   UIAutomationProvider.dll
   UIAutomationTypes.dll
   WindowsBase.dll
+ serilog.enrichers.environment/3.0.1/lib/net8.0/Serilog.Enrichers.Environment.dll
+ serilog.enrichers.process/3.0.0/lib/net8.0/Serilog.Enrichers.Process.dll
+ serilog.enrichers.thread/4.0.0/lib/net8.0/Serilog.Enrichers.Thread.dll
+ serilog.extensions.logging/10.0.0/lib/net8.0/Serilog.Extensions.Logging.dll
+ serilog.settings.configuration/10.0.0/lib/net8.0/Serilog.Settings.Configuration.dll
+ serilog.sinks.console/6.1.1/lib/net8.0/Serilog.Sinks.Console.dll
+ serilog.sinks.file/7.0.0/lib/net8.0/Serilog.Sinks.File.dll
+ serilog.sinks.seq/9.0.0/lib/net6.0/Serilog.Sinks.Seq.dll
+ serilog/4.3.0/lib/net8.0/Serilog.dll
  sqlitepclraw.bundle_e_sqlite3/2.1.6/lib/netstandard2.0/SQLitePCLRaw.batteries_v2.dll
  sqlitepclraw.core/2.1.6/lib/netstandard2.0/SQLitePCLRaw.core.dll
  sqlitepclraw.provider.e_sqlite3/2.1.6/lib/net6.0-windows7.0/SQLitePCLRaw.provider.e_sqlite3.dll
  ssh.net/2025.1.0/lib/net8.0/Renci.SshNet.dll
+ system.diagnostics.diagnosticsource/10.0.0/lib/net8.0/System.Diagnostics.DiagnosticSource.dll
+ system.io.pipelines/10.0.7/lib/net8.0/System.IO.Pipelines.dll
+ system.text.encodings.web/10.0.7/lib/net8.0/System.Text.Encodings.Web.dll
+ system.text.json/10.0.7/lib/net8.0/System.Text.Json.dll
  wpf-ui.abstractions/4.2.1/lib/net8.0/Wpf.Ui.Abstractions.dll
  wpf-ui/4.2.1/lib/net8.0-windows7.0/Wpf.Ui.dll
 
@@ -291,7 +313,6 @@ ViewModels/
  Microsoft.Interop.JavaScript.JSImportGenerator.dll
  Microsoft.Interop.LibraryImportGenerator.dll
  Microsoft.Interop.SourceGeneration.dll
- System.Text.Json.SourceGeneration.dll
  System.Text.RegularExpressions.Generator.dll
 <DOTNET>/sdk/10.0.107/Sdks/Microsoft.NET.Sdk/analyzers/
  Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll
@@ -299,7 +320,10 @@ ViewModels/
 <NUGET>/communitytoolkit.mvvm/8.4.2/analyzers/dotnet/roslyn5.0/cs/
  CommunityToolkit.Mvvm.CodeFixers.dll
  CommunityToolkit.Mvvm.SourceGenerators.dll
-<NUGET>/microsoft.extensions.logging.abstractions/8.0.3/analyzers/dotnet/roslyn4.4/cs/Microsoft.Extensions.Logging.Generators.dll
+<NUGET>/
+ microsoft.extensions.logging.abstractions/10.0.0/analyzers/dotnet/roslyn4.4/cs/Microsoft.Extensions.Logging.Generators.dll
+ microsoft.extensions.options/10.0.0/analyzers/dotnet/roslyn4.4/cs/Microsoft.Extensions.Options.SourceGeneration.dll
+ system.text.json/10.0.7/analyzers/dotnet/roslyn4.4/cs/System.Text.Json.SourceGeneration.dll
 
 [analyzerConfigFiles]
 <DOTNET>/sdk/10.0.107/Sdks/Microsoft.NET.Sdk/analyzers/build/config/analysislevel_8_default.globalconfig
