@@ -282,6 +282,8 @@ ViewModels/
  sqlitepclraw.core/2.1.6/lib/netstandard2.0/SQLitePCLRaw.core.dll
  sqlitepclraw.provider.e_sqlite3/2.1.6/lib/net6.0-windows7.0/SQLitePCLRaw.provider.e_sqlite3.dll
  ssh.net/2025.1.0/lib/net8.0/Renci.SshNet.dll
+ wpf-ui.abstractions/4.2.1/lib/net8.0/Wpf.Ui.Abstractions.dll
+ wpf-ui/4.2.1/lib/net8.0-windows7.0/Wpf.Ui.dll
 
 [analyzerReferences]
 <DOTNET>/packs/Microsoft.NETCore.App.Ref/8.0.26/analyzers/dotnet/cs/

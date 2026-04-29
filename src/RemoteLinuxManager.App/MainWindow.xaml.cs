@@ -1,12 +1,12 @@
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using RemoteLinuxManager.App.ViewModels;
+using Wpf.Ui.Controls;
 
 namespace RemoteLinuxManager.App;
 
-public partial class MainWindow : Window
+public partial class MainWindow : FluentWindow
 {
     private readonly List<int> _searchMatches = [];
     private int _currentMatchIndex = -1;
@@ -15,46 +15,6 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = viewModel;
-        viewModel.PropertyChanged += OnViewModelPropertyChanged;
-    }
-
-    // ── ViewModel → PasswordBox 回写（选配置后填充密码）────────
-
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (sender is not MainViewModel vm) return;
-
-        switch (e.PropertyName)
-        {
-            case nameof(MainViewModel.Password):
-                if (PasswordBox.Password != vm.Password)
-                    PasswordBox.Password = vm.Password;
-                break;
-            case nameof(MainViewModel.PrivateKeyPassphrase):
-                if (PassphraseBox.Password != vm.PrivateKeyPassphrase)
-                    PassphraseBox.Password = vm.PrivateKeyPassphrase;
-                break;
-        }
-    }
-
-    // ── 连接配置密码框 ─────────────────────────────────────────
-
-    private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-    {
-        if (DataContext is MainViewModel vm)
-            vm.Password = ((PasswordBox)sender).Password;
-    }
-
-    private void PassphraseBox_PasswordChanged(object sender, RoutedEventArgs e)
-    {
-        if (DataContext is MainViewModel vm)
-            vm.PrivateKeyPassphrase = ((PasswordBox)sender).Password;
-    }
-
-    private void SudoPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-    {
-        if (DataContext is MainViewModel vm)
-            vm.SudoPassword = ((PasswordBox)sender).Password;
     }
 
     // ── 文件树选择 ────────────────────────────────────────────
@@ -215,5 +175,3 @@ public partial class MainWindow : Window
         SearchResultLabel.Text = $"{_currentMatchIndex + 1}/{_searchMatches.Count}";
     }
 }
-
-
