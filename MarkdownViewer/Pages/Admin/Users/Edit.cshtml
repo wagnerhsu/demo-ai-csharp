@@ -1,0 +1,48 @@
+@page
+@model EditUserModel
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<div class="admin-layout">
+    <div class="admin-header">
+        <h2>✏️ Edit User</h2>
+        <a href="/Admin/Users" class="btn btn-sm btn-outline">← Back</a>
+    </div>
+
+    @if (Model.Error is not null)
+    {
+        <div class="alert alert-error">@Model.Error</div>
+    }
+
+    <form method="post" class="form-card">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.UserId" />
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" value="@Model.Username" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label>Display Name</label>
+            <input type="text" name="displayName" value="@Model.DisplayName" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" value="@Model.Email" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label>New Password <small>(leave blank to keep current)</small></label>
+            <input type="password" name="newPassword" class="form-control" autocomplete="new-password" />
+        </div>
+        <div class="form-group">
+            <label>Role</label>
+            <select name="role" class="form-control">
+                @foreach (var r in new[] { "Viewer", "Editor", "Admin" })
+                {
+                    <option value="@r" selected="@(r == Model.Role ? "selected" : null)">@r</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn">Save Changes</button>
+    </form>
+</div>

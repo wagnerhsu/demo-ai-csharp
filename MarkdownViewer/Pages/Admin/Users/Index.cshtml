@@ -1,0 +1,55 @@
+@page
+@model UsersIndexModel
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="admin-layout">
+    <div class="admin-header">
+        <h2>👥 User Management</h2>
+        <a href="/Admin/Users/Create" class="btn btn-sm">+ New User</a>
+    </div>
+
+    @if (TempData["Message"] is string msg)
+    {
+        <div class="alert alert-success">@msg</div>
+    }
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Display Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model.Users)
+            {
+                <tr class="@(u.IsLockedOut ? "row-locked" : "")">
+                    <td>@u.UserName</td>
+                    <td>@u.DisplayName</td>
+                    <td>@u.Email</td>
+                    <td><span class="badge badge-@u.Role.ToLower()">@u.Role</span></td>
+                    <td>@(u.IsLockedOut ? "🔒 Locked" : "✅ Active")</td>
+                    <td>
+                        <a href="/Admin/Users/Edit?id=@u.Id" class="btn btn-sm btn-outline">Edit</a>
+                        @if (u.UserName != User.Identity!.Name)
+                        {
+                            <form method="post" asp-page-handler="Toggle" style="display:inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@u.Id" />
+                                <button type="submit" class="btn btn-sm @(u.IsLockedOut ? "" : "btn-warning")">
+                                    @(u.IsLockedOut ? "Unlock" : "Lock")
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

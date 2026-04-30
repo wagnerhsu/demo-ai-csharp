@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Markdown Viewer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.6.1/github-markdown-light.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+<nav class="navbar">
+    <div class="navbar-brand">
+        <a href="/">📄 Markdown Viewer</a>
+    </div>
+    <div class="navbar-menu">
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <span class="navbar-user">@User.Identity.Name</span>
+            @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+            {
+                <a href="/Edit" class="btn btn-sm btn-outline">New File</a>
+            }
+            @if (User.IsInRole("Admin"))
+            {
+                <a href="/Admin/Users" class="btn btn-sm btn-outline">Users</a>
+            }
+            <form method="post" action="/Account/Logout" style="display:inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-sm">Logout</button>
+            </form>
+        }
+        else
+        {
+            <a href="/Account/Login" class="btn btn-sm">Login</a>
+        }
+    </div>
+</nav>
+
+<div class="app-container">
+    @RenderBody()
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

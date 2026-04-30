@@ -1,0 +1,35 @@
+@page
+@using Microsoft.AspNetCore.Authorization
+@model ViewPageModel
+@{
+    ViewData["Title"] = Model.FileName;
+}
+
+<div class="view-layout">
+    <article class="markdown-body" id="markdown-content">
+        @Html.Raw(Model.HtmlContent)
+    </article>
+
+    @if (Model.Outline.Any())
+    {
+        <aside class="toc-sidebar" id="toc">
+            <div class="toc-header">On this page</div>
+            <nav>
+                @foreach (var item in Model.Outline)
+                {
+                    <a href="#@item.Anchor"
+                       class="toc-link toc-level-@item.Level"
+                       data-anchor="@item.Anchor">@item.Text</a>
+                }
+            </nav>
+        </aside>
+    }
+</div>
+
+<div class="view-actions">
+    <a href="/" class="btn btn-sm btn-outline">← Back</a>
+    @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+    {
+        <a href="/Edit?path=@Uri.EscapeDataString(Model.Path)" class="btn btn-sm">✏️ Edit</a>
+    }
+</div>
