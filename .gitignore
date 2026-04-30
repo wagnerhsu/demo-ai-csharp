@@ -19,3 +19,4 @@ node_modules/
 *.ttf binary
 *.woff binary
 *.woff2 binary
+*.lscache
