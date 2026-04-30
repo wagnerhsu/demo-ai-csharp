@@ -1,8 +1,21 @@
 bin/
 obj/
-.vs/
+.vscode/
+.idea/
 *.user
-*.suo
-*.userosscache
-*.sln.docstates
-TestResults/
+.vs/
+
+*.generated.sln
+Logs/
+
+/AspNetCore/JsonContentDemo/JsonContentDemo/users.db
+node_modules/
+/AspNetCore/PromptManager/wwwroot/lib/
+/AspNetCore/PromptManager/PromptManager.db
+/AspNetCore/PromptManager/PromptManager.db-shm
+/AspNetCore/PromptManager/PromptManager.db-wal
+# 字体文件必须被视为二进制，防止换行符转换
+*.eot binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
