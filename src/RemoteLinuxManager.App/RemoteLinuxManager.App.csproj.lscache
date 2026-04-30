@@ -48,6 +48,7 @@ TemporaryDependencyNodeTargetIdentifier=net8.0-windows
 /target:winexe
 /warnaserror-
 /utf8output
+/win32icon:ssh_icon.ico
 /deterministic+
 /langversion:12.0
 /warnaserror+:NU1605,SYSLIB0011
@@ -62,6 +63,7 @@ obj/Debug/net8.0-windows/
  MainWindow.g.cs
  RemoteLinuxManager.App.AssemblyInfo.cs
  RemoteLinuxManager.App.GlobalUsings.g.cs
+ RemoteLinuxManager.App_Content.g.cs
 ViewModels/
  FileTreeNode.cs
  MainViewModel.cs
