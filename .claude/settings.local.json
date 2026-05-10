@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet new *)",
+      "Bash(dotnet sln *)",
+      "Bash(dotnet add *)",
+      "Bash(dotnet ef *)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet restore *)",
+      "Bash(dotnet run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5100/)",
+      "mcp__plugin_everything-claude-code_playwright__browser_navigate",
+      "Bash(curl -s http://localhost:5100/)",
+      "Bash(curl -s http://localhost:5100/Poems/Create)",
+      "Bash(curl *)",
+      "Bash(grep -o 'value=\"[A-Za-z0-9_-]\\\\{50,\\\\}\"')",
+      "Bash(pkill -f \"dotnet.*PoetryManager\")",
+      "Bash(pkill -f \"PoetryManager\")",
+      "Bash(echo \"PID=$!\")"
+    ]
+  }
+}

@@ -1,0 +1,118 @@
+@page
+@model PoetryManager.Web.Pages.IndexModel
+@{
+    ViewData["Title"] = "诗词列表";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>古诗词列表</h2>
+    <a asp-page="/Poems/Create" class="btn btn-primary">+ 新建诗词</a>
+</div>
+
+<form method="get" class="mb-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <input type="text" name="q" value="@Model.SearchTerm" class="form-control"
+                           placeholder="全文搜索（标题、作者、朝代、正文）" />
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="author" value="@Model.FilterAuthor" class="form-control" placeholder="按作者筛选" />
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="dynasty" value="@Model.FilterDynasty" class="form-control" placeholder="按朝代筛选" />
+                </div>
+                <div class="col-md-2">
+                    <select name="type" class="form-select">
+                        <option value="">全部类型</option>
+                        <option value="0" selected="@(Model.FilterType == 0)">诗</option>
+                        <option value="1" selected="@(Model.FilterType == 1)">词</option>
+                        <option value="2" selected="@(Model.FilterType == 2)">曲</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="tag" value="@Model.FilterTag" class="form-control" placeholder="按标签筛选" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <button type="submit" class="btn btn-outline-primary">搜索</button>
+                    <a asp-page="/Index" class="btn btn-outline-secondary ms-2">重置</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@if (!Model.Poems.Any())
+{
+    <div class="alert alert-info">暂无诗词记录，<a asp-page="/Poems/Create">立即添加</a>。</div>
+}
+else
+{
+    <p class="text-muted">共 @Model.TotalCount 首，当前第 @(Model.PageIndex + 1) / @Model.TotalPages 页</p>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>标题</th>
+                    <th>作者</th>
+                    <th>朝代</th>
+                    <th>类型</th>
+                    <th>标签</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var poem in Model.Poems)
+                {
+                    <tr>
+                        <td><a asp-page="/Poems/Details" asp-route-id="@poem.Id">@poem.Title</a></td>
+                        <td>@poem.Author</td>
+                        <td>@poem.Dynasty</td>
+                        <td>
+                            @switch (poem.Type)
+                            {
+                                case PoetryManager.Web.Models.PoemType.Shi: <span class="badge bg-primary">诗</span> break;
+                                case PoetryManager.Web.Models.PoemType.Ci: <span class="badge bg-success">词</span> break;
+                                case PoetryManager.Web.Models.PoemType.Qu: <span class="badge bg-warning text-dark">曲</span> break;
+                            }
+                        </td>
+                        <td>
+                            @foreach (var pt in poem.PoemTags)
+                            {
+                                <span class="badge bg-secondary me-1">@pt.Tag.Name</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-page="/Poems/Details" asp-route-id="@poem.Id" class="btn btn-sm btn-outline-info">查看</a>
+                            <a asp-page="/Poems/Edit" asp-route-id="@poem.Id" class="btn btn-sm btn-outline-warning">编辑</a>
+                            <a asp-page="/Poems/Delete" asp-route-id="@poem.Id" class="btn btn-sm btn-outline-danger">删除</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav>
+            <ul class="pagination">
+                @for (int i = 0; i < Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                        <a class="page-link" asp-page="/Index"
+                           asp-route-pageIndex="@i"
+                           asp-route-q="@Model.SearchTerm"
+                           asp-route-author="@Model.FilterAuthor"
+                           asp-route-dynasty="@Model.FilterDynasty"
+                           asp-route-type="@Model.FilterType"
+                           asp-route-tag="@Model.FilterTag">@(i + 1)</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+}
