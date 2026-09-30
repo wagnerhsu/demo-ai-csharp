@@ -47,6 +47,31 @@ Buttons: **Start** begins the scan, **Stop** cancels it, **Clear** empties the o
 - Refused ports are counted but not listed.
 - With Hide Errors unchecked, timeouts and other socket errors are listed too.
 
+## Configuration
+
+Initial values for the fields and checkboxes are read from `appsettings.json`, which is copied next to `Yaps.exe` on build. Edit the copy in the output folder to change defaults without rebuilding, or edit `Yaps/appsettings.json` and rebuild.
+
+```json
+{
+  "Defaults": {
+    "StartPort": 3500,
+    "StopPort": 3600,
+    "TimeoutMs": 2500,
+    "Simultaneous": 100,
+    "StartAddress": "192.168.100.1",
+    "StopAddress": "192.168.100.1",
+    "ScanOrder": "PortsFirst",
+    "ResolveNames": false,
+    "Continuous": false,
+    "HideErrors": false,
+    "ProbePorts": false,
+    "Hex": false
+  }
+}
+```
+
+`ScanOrder` is `PortsFirst` or `IpsFirst`. Any key you omit, or a missing file, falls back to the values shown above. A file that cannot be parsed also falls back to them, and a warning is shown at startup.
+
 ## Project layout
 
 ```
@@ -56,4 +81,6 @@ Yaps/
   MainWindow.xaml        UI layout
   MainWindow.xaml.cs     input validation, scan control, result display
   PortScanner.cs         scan engine (target enumeration, TCP connect, banner probe)
+  AppSettings.cs         loads default values from appsettings.json
+  appsettings.json       default field and checkbox values
 ```

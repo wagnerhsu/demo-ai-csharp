@@ -10,4 +10,8 @@
     <AssemblyName>Yaps</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

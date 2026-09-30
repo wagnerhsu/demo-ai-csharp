@@ -54,13 +54,13 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Text="Start Port" Style="{StaticResource FieldLabel}" />
-                <TextBox Grid.Row="0" Grid.Column="1" x:Name="StartPortBox" Text="3500" Style="{StaticResource FieldBox}" />
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="StartPortBox" Style="{StaticResource FieldBox}" />
                 <TextBlock Grid.Row="1" Text="Stop Port" Style="{StaticResource FieldLabel}" />
-                <TextBox Grid.Row="1" Grid.Column="1" x:Name="StopPortBox" Text="3600" Style="{StaticResource FieldBox}" />
+                <TextBox Grid.Row="1" Grid.Column="1" x:Name="StopPortBox" Style="{StaticResource FieldBox}" />
                 <TextBlock Grid.Row="2" Text="Timeout (ms)" Style="{StaticResource FieldLabel}" />
-                <TextBox Grid.Row="2" Grid.Column="1" x:Name="TimeoutBox" Text="2500" Style="{StaticResource FieldBox}" />
+                <TextBox Grid.Row="2" Grid.Column="1" x:Name="TimeoutBox" Style="{StaticResource FieldBox}" />
                 <TextBlock Grid.Row="3" Text="Simultaneous" Style="{StaticResource FieldLabel}" />
-                <TextBox Grid.Row="3" Grid.Column="1" x:Name="SimultaneousBox" Text="100" Style="{StaticResource FieldBox}" />
+                <TextBox Grid.Row="3" Grid.Column="1" x:Name="SimultaneousBox" Style="{StaticResource FieldBox}" />
             </Grid>
 
             <StackPanel Grid.Column="1" Margin="20,0,0,0">
@@ -75,9 +75,9 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Text="Start Address" Style="{StaticResource FieldLabel}" />
-                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="StartAddressBox" Text="192.168.100.1" Style="{StaticResource FieldBox}" />
+                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="StartAddressBox" Style="{StaticResource FieldBox}" />
                     <TextBlock Grid.Row="1" Text="Stop Address" Style="{StaticResource FieldLabel}" />
-                    <TextBox Grid.Row="1" Grid.Column="1" x:Name="StopAddressBox" Text="192.168.100.1" Style="{StaticResource FieldBox}" />
+                    <TextBox Grid.Row="1" Grid.Column="1" x:Name="StopAddressBox" Style="{StaticResource FieldBox}" />
                 </Grid>
 
                 <Grid Margin="0,4,0,0">
@@ -87,7 +87,7 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Margin="0,18,0,0">
-                        <RadioButton x:Name="PortsFirstRadio" Content="scan ports first" IsChecked="True" Margin="0,0,0,6" />
+                        <RadioButton x:Name="PortsFirstRadio" Content="scan ports first" Margin="0,0,0,6" />
                         <RadioButton x:Name="IpsFirstRadio" Content="scan IPs first" />
                     </StackPanel>
 

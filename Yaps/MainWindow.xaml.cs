@@ -23,6 +23,12 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
+        var settings = AppSettings.Load(out var settingsError);
+        ApplyDefaults(settings.Defaults);
+        if (settingsError is not null)
+            Loaded += (_, _) => MessageBox.Show(this, settingsError, "Settings", MessageBoxButton.OK, MessageBoxImage.Warning);
+
         _uiTimer.Tick += (_, _) => FlushUi();
         Closing += (_, _) =>
         {
@@ -30,6 +36,24 @@ public partial class MainWindow : Window
             _uiTimer.Stop();
         };
         UpdateStatus();
+    }
+
+    private void ApplyDefaults(ScanDefaults d)
+    {
+        StartPortBox.Text = d.StartPort.ToString();
+        StopPortBox.Text = d.StopPort.ToString();
+        TimeoutBox.Text = d.TimeoutMs.ToString();
+        SimultaneousBox.Text = d.Simultaneous.ToString();
+        StartAddressBox.Text = d.StartAddress;
+        StopAddressBox.Text = d.StopAddress;
+        PortsFirstRadio.IsChecked = d.ScanOrder == ScanOrder.PortsFirst;
+        IpsFirstRadio.IsChecked = d.ScanOrder == ScanOrder.IpsFirst;
+        ResolveNamesCheck.IsChecked = d.ResolveNames;
+        ContinuousCheck.IsChecked = d.Continuous;
+        HideErrorsCheck.IsChecked = d.HideErrors;
+        ProbePortsCheck.IsChecked = d.ProbePorts;
+        HexCheck.IsChecked = d.Hex;
+        OnLiveOptionChanged(this, new RoutedEventArgs());
     }
 
     private async void OnStartClick(object sender, RoutedEventArgs e) => await StartScanAsync();
