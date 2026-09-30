@@ -1,0 +1,57 @@
+# YAPS - Yet Another Port Scanner
+
+A small WPF TCP connect port scanner built on .NET 8, modeled on the classic YAPS utility (see `01.png` in the repo root).
+
+> Only scan hosts and networks you own or are explicitly authorized to test.
+
+## Requirements
+
+- Windows
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) or later
+
+## Build and run
+
+```bash
+dotnet run --project Yaps
+```
+
+To build only:
+
+```bash
+dotnet build Yaps -c Release
+```
+
+## Usage
+
+| Field / option | Description |
+| --- | --- |
+| Start Port / Stop Port | Inclusive port range to scan (1-65535). |
+| Start Address / Stop Address | Inclusive IPv4 range to scan. Use the same value for a single host. |
+| Timeout (ms) | How long to wait for a connection before it counts as a timeout. |
+| Simultaneous | Maximum number of concurrent connection attempts (1-10000). |
+| scan ports first | For each address, scan all ports before moving to the next address. |
+| scan IPs first | For each port, scan all addresses before moving to the next port. |
+| Resolve names | Reverse DNS lookup for hosts with open ports. |
+| Continuous | Repeat the scan until Stop is pressed. |
+| Hide Errors | Hide timeouts and socket errors from the output. |
+| Probe Ports | After connecting, listen up to 500 ms for a greeting banner (SSH, FTP, SMTP...). If the service stays silent, send `HEAD / HTTP/1.0` and read the reply for up to 750 ms. Up to 256 bytes are shown; non-printable bytes appear as `.`. |
+
+Buttons: **Start** begins the scan, **Stop** cancels it, **Clear** empties the output, **Close** exits, **About** shows program info.
+
+### Output
+
+- The status line shows the current target with `connect` and `refuse` counts. `timeout` and `error` counts appear once there are any.
+- Each open port is listed as `ip:port open`, followed by the resolved name and banner when those options are enabled.
+- Refused ports are counted but not listed.
+- With Hide Errors unchecked, timeouts and other socket errors are listed too.
+
+## Project layout
+
+```
+Yaps/
+  Yaps.csproj            net8.0-windows WPF project
+  App.xaml(.cs)          application entry point
+  MainWindow.xaml        UI layout
+  MainWindow.xaml.cs     input validation, scan control, result display
+  PortScanner.cs         scan engine (target enumeration, TCP connect, banner probe)
+```
