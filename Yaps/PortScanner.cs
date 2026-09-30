@@ -33,7 +33,7 @@ public sealed record ScanEvent(
     IPAddress Address,
     int Port,
     ProbeResult Result,
-    string? Banner,
+    byte[]? BannerData,
     string? ErrorMessage);
 
 public sealed class PortScanner
@@ -118,7 +118,7 @@ public sealed class PortScanner
             return new ScanEvent(address, port, ProbeResult.Error, null, ex.SocketErrorCode.ToString());
         }
 
-        string? banner = await ReadBannerAsync(client, _options.ProbePorts, token).ConfigureAwait(false);
+        var banner = await ReadBannerAsync(client, _options.ProbePorts, token).ConfigureAwait(false);
 
         return new ScanEvent(address, port, ProbeResult.Connect, banner, null);
     }
@@ -130,7 +130,7 @@ public sealed class PortScanner
 
     private static readonly byte[] ActiveProbe = "HEAD / HTTP/1.0\r\n\r\n"u8.ToArray();
 
-    private static async Task<string?> ReadBannerAsync(TcpClient client, bool activeProbe, CancellationToken token)
+    private static async Task<byte[]?> ReadBannerAsync(TcpClient client, bool activeProbe, CancellationToken token)
     {
         var stream = client.GetStream();
 
@@ -151,7 +151,7 @@ public sealed class PortScanner
             data = await ReadAvailableAsync(stream, ProbeReplyWaitMs, token).ConfigureAwait(false);
         }
 
-        return data.Length == 0 ? null : FormatBanner(data);
+        return data.Length == 0 ? null : data;
     }
 
     // Waits up to firstWaitMs for data, then keeps collecting chunks until the sender pauses.
@@ -182,10 +182,11 @@ public sealed class PortScanner
         return buffer[..total];
     }
 
-    private static string FormatBanner(byte[] data)
+    public static string FormatBanner(byte[] data, bool hex)
     {
+        if (hex) return string.Join(' ', data.Select(b => b.ToString("X2")));
+
         var decoded = Encoding.UTF8.GetString(data);
-        int printable = 0;
         var text = new StringBuilder(decoded.Length);
 
         foreach (char c in decoded)
@@ -194,27 +195,14 @@ public sealed class PortScanner
             {
                 if (text.Length > 0 && text[^1] != ' ') text.Append(' ');
             }
-            else if (char.IsControl(c) || c == '�')
-            {
-                text.Append('.');
-            }
             else
             {
-                text.Append(c);
-                printable++;
+                text.Append(char.IsControl(c) || c == '�' ? '.' : c);
             }
-        }
-
-        // Mostly non-text data (TLS, custom binary protocols): show hex so the port still reports something.
-        if (printable * 2 < decoded.Length)
-        {
-            const int shown = 24;
-            var hex = string.Join(' ', data.Take(shown).Select(b => b.ToString("X2")));
-            return $"[{data.Length} bytes] {hex}{(data.Length > shown ? " ..." : "")}";
         }
 
         var result = text.ToString().Trim();
-        return result.Length > 0 ? result : $"[{data.Length} bytes] {Convert.ToHexString(data)}";
+        return result.Length > 0 ? result : new string('.', Math.Min(data.Length, 32));
     }
 
     public static uint ToUInt(IPAddress address)

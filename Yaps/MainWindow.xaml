@@ -96,6 +96,7 @@
                         <CheckBox x:Name="ContinuousCheck" Content="Continuous" Style="{StaticResource OptionBox}" />
                         <CheckBox x:Name="HideErrorsCheck" Content="Hide Errors" Style="{StaticResource OptionBox}" Click="OnLiveOptionChanged" />
                         <CheckBox x:Name="ProbePortsCheck" Content="Probe Ports" Style="{StaticResource OptionBox}" />
+                        <CheckBox x:Name="HexCheck" Content="Hex" Style="{StaticResource OptionBox}" Click="OnLiveOptionChanged" />
                     </StackPanel>
                 </Grid>
             </StackPanel>

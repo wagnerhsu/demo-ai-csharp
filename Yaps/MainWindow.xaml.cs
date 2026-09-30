@@ -18,6 +18,7 @@ public partial class MainWindow : Window
     private volatile string _currentTarget = "";
     private volatile bool _resolveNames;
     private volatile bool _hideErrors;
+    private volatile bool _hex;
 
     public MainWindow()
     {
@@ -51,6 +52,7 @@ public partial class MainWindow : Window
     {
         _resolveNames = ResolveNamesCheck.IsChecked == true;
         _hideErrors = HideErrorsCheck.IsChecked == true;
+        _hex = HexCheck.IsChecked == true;
     }
 
     private async Task StartScanAsync()
@@ -106,7 +108,8 @@ public partial class MainWindow : Window
                 Interlocked.Increment(ref _connect);
                 var line = new StringBuilder($"{e.Address}:{e.Port} open");
                 if (_resolveNames) line.Append($" [{ResolveName(e.Address)}]");
-                if (!string.IsNullOrEmpty(e.Banner)) line.Append($"  \"{e.Banner}\"");
+                if (e.BannerData is { Length: > 0 } data)
+                    line.Append($"  \"{PortScanner.FormatBanner(data, _hex)}\"");
                 _pending.Enqueue(line.ToString());
                 break;
             case ProbeResult.Refuse:
