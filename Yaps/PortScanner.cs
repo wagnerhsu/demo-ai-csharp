@@ -118,57 +118,103 @@ public sealed class PortScanner
             return new ScanEvent(address, port, ProbeResult.Error, null, ex.SocketErrorCode.ToString());
         }
 
-        string? banner = null;
-        if (_options.ProbePorts)
-            banner = await ReadBannerAsync(client, token).ConfigureAwait(false);
+        string? banner = await ReadBannerAsync(client, _options.ProbePorts, token).ConfigureAwait(false);
 
         return new ScanEvent(address, port, ProbeResult.Connect, banner, null);
     }
 
+    private const int GreetingWaitMs = 1000;
+    private const int ProbeReplyWaitMs = 1000;
+    private const int IdleGapMs = 200;
+    private const int MaxBannerBytes = 512;
+
     private static readonly byte[] ActiveProbe = "HEAD / HTTP/1.0\r\n\r\n"u8.ToArray();
 
-    private static async Task<string?> ReadBannerAsync(TcpClient client, CancellationToken token)
+    private static async Task<string?> ReadBannerAsync(TcpClient client, bool activeProbe, CancellationToken token)
     {
         var stream = client.GetStream();
 
-        // Services like SSH/FTP/SMTP greet the client first, so listen briefly before sending anything.
-        var banner = await ReadWithTimeoutAsync(stream, 500, token).ConfigureAwait(false);
-        if (banner is not null) return banner;
-
-        // Silent services (HTTP and friends) only answer once spoken to.
-        try
+        // Many services (SSH, FTP, SMTP, custom TCP servers) greet the client first.
+        var data = await ReadAvailableAsync(stream, GreetingWaitMs, token).ConfigureAwait(false);
+        if (data.Length == 0 && activeProbe)
         {
-            await stream.WriteAsync(ActiveProbe, token).ConfigureAwait(false);
-        }
-        catch (Exception) when (!token.IsCancellationRequested)
-        {
-            return null;
+            // Silent services (HTTP and friends) only answer once spoken to.
+            try
+            {
+                await stream.WriteAsync(ActiveProbe, token).ConfigureAwait(false);
+            }
+            catch (Exception) when (!token.IsCancellationRequested)
+            {
+                return null;
+            }
+
+            data = await ReadAvailableAsync(stream, ProbeReplyWaitMs, token).ConfigureAwait(false);
         }
 
-        return await ReadWithTimeoutAsync(stream, 750, token).ConfigureAwait(false);
+        return data.Length == 0 ? null : FormatBanner(data);
     }
 
-    private static async Task<string?> ReadWithTimeoutAsync(NetworkStream stream, int timeoutMs, CancellationToken token)
+    // Waits up to firstWaitMs for data, then keeps collecting chunks until the sender pauses.
+    private static async Task<byte[]> ReadAvailableAsync(NetworkStream stream, int firstWaitMs, CancellationToken token)
     {
-        using var cts = CancellationTokenSource.CreateLinkedTokenSource(token);
-        cts.CancelAfter(timeoutMs);
-        var buffer = new byte[256];
+        var buffer = new byte[MaxBannerBytes];
+        int total = 0;
+        int wait = firstWaitMs;
 
-        try
+        while (total < buffer.Length)
         {
-            int read = await stream.ReadAsync(buffer, cts.Token).ConfigureAwait(false);
-            if (read <= 0) return null;
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(token);
+            cts.CancelAfter(wait);
 
-            var text = new StringBuilder(read);
-            for (int i = 0; i < read; i++)
-                text.Append(buffer[i] is >= 32 and < 127 ? (char)buffer[i] : '.');
-            var result = text.ToString().Trim('.', ' ');
-            return result.Length > 0 ? result : null;
+            try
+            {
+                int read = await stream.ReadAsync(buffer.AsMemory(total), cts.Token).ConfigureAwait(false);
+                if (read <= 0) break;
+                total += read;
+                wait = IdleGapMs;
+            }
+            catch (Exception) when (!token.IsCancellationRequested)
+            {
+                break;
+            }
         }
-        catch (Exception) when (!token.IsCancellationRequested)
+
+        return buffer[..total];
+    }
+
+    private static string FormatBanner(byte[] data)
+    {
+        var decoded = Encoding.UTF8.GetString(data);
+        int printable = 0;
+        var text = new StringBuilder(decoded.Length);
+
+        foreach (char c in decoded)
         {
-            return null;
+            if (c is '\r' or '\n' or '\t')
+            {
+                if (text.Length > 0 && text[^1] != ' ') text.Append(' ');
+            }
+            else if (char.IsControl(c) || c == '�')
+            {
+                text.Append('.');
+            }
+            else
+            {
+                text.Append(c);
+                printable++;
+            }
         }
+
+        // Mostly non-text data (TLS, custom binary protocols): show hex so the port still reports something.
+        if (printable * 2 < decoded.Length)
+        {
+            const int shown = 24;
+            var hex = string.Join(' ', data.Take(shown).Select(b => b.ToString("X2")));
+            return $"[{data.Length} bytes] {hex}{(data.Length > shown ? " ..." : "")}";
+        }
+
+        var result = text.ToString().Trim();
+        return result.Length > 0 ? result : $"[{data.Length} bytes] {Convert.ToHexString(data)}";
     }
 
     public static uint ToUInt(IPAddress address)

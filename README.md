@@ -34,14 +34,16 @@ dotnet build Yaps -c Release
 | Resolve names | Reverse DNS lookup for hosts with open ports. |
 | Continuous | Repeat the scan until Stop is pressed. |
 | Hide Errors | Hide timeouts and socket errors from the output. |
-| Probe Ports | After connecting, listen up to 500 ms for a greeting banner (SSH, FTP, SMTP...). If the service stays silent, send `HEAD / HTTP/1.0` and read the reply for up to 750 ms. Up to 256 bytes are shown; non-printable bytes appear as `.`. |
+| Probe Ports | If the service sends nothing after connecting, send `HEAD / HTTP/1.0` and show its reply (waits up to 1 s). Without this option, only data the server volunteers is shown. |
 
 Buttons: **Start** begins the scan, **Stop** cancels it, **Clear** empties the output, **Close** exits, **About** shows program info.
 
 ### Output
 
 - The status line shows the current target with `connect` and `refuse` counts. `timeout` and `error` counts appear once there are any.
-- Each open port is listed as `ip:port open`, followed by the resolved name and banner when those options are enabled.
+- Each open port is listed as `ip:port open`, followed by the resolved name (if enabled) and whatever the server sent after connecting.
+- After connecting, the scanner always waits up to 1 s for a greeting (SSH, FTP, SMTP, custom TCP servers...) and keeps reading until the sender pauses, up to 512 bytes. Text is shown as-is (UTF-8), newlines become spaces, and control characters become `.`.
+- Mostly binary data (e.g. TLS) is shown as `[N bytes]` plus a hex dump.
 - Refused ports are counted but not listed.
 - With Hide Errors unchecked, timeouts and other socket errors are listed too.
 
